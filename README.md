@@ -41,3 +41,10 @@ kept in Vault; a consumer app reads it to push its own dashboards and alerts.
 make lint
 make module-tests
 ```
+
+## Service mesh
+
+With `mesh.enabled`, Grafana gets an Envoy sidecar (transparent proxy) and joins
+the mesh as a client: point the data sources at `mimir.virtual.consul` and
+`loki.virtual.consul`, and allow `grafana` in their intentions. Its HTTP port
+stays open for Traefik, which is outside the mesh.

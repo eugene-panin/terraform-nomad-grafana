@@ -1,3 +1,4 @@
+mock_provider "consul" {}
 mock_provider "nomad" {}
 mock_provider "random" {}
 mock_provider "vault" {}
@@ -71,5 +72,33 @@ run "memory_is_reserved_by_use_and_may_grow" {
   assert {
     condition     = strcontains(nomad_job.grafana.jobspec, "memory     = 128") && strcontains(nomad_job.grafana.jobspec, "memory_max = 512")
     error_message = "The task must reserve its usual memory and be allowed to grow to memory_max."
+  }
+}
+
+run "it_joins_the_mesh_as_a_client" {
+  command = apply
+
+  variables {
+    mesh = { enabled = true }
+  }
+
+  assert {
+    condition = (
+      strcontains(nomad_job.grafana.jobspec, "transparent_proxy")
+      && strcontains(nomad_job.grafana.jobspec, "exclude_inbound_ports = [\"3000\",\"9102\"]")
+      && strcontains(nomad_job.grafana.jobspec, "tags = [\"mesh-sidecar\"]")
+      && strcontains(nomad_job.grafana.jobspec, "name     = \"grafana-envoy\"")
+      && jsondecode(consul_config_entry.defaults[0].config_json).Protocol == "http"
+    )
+    error_message = "In the mesh Grafana must sit behind an Envoy sidecar with its own tags, keep its port open for Traefik, and expose Envoy's metrics."
+  }
+}
+
+run "out_of_the_mesh_by_default" {
+  command = apply
+
+  assert {
+    condition     = !strcontains(nomad_job.grafana.jobspec, "connect {") && length(consul_config_entry.defaults) == 0
+    error_message = "Without mesh.enabled there is no sidecar."
   }
 }

@@ -21,3 +21,11 @@
 - The task reserves 128 MB, sized to its use, and may grow to 512 MB:
   `resources.memory_max` (Nomad memory oversubscription, which the platform
   turns on). It reserved more than it used before.
+
+## v0.1.3
+
+- `mesh`: Grafana can join the Consul service mesh as a client — an Envoy
+  sidecar with the transparent proxy, so it reaches data sources named
+  `<name>.virtual.consul` over mTLS, as their intentions allow. Its port stays
+  open for Traefik; the sidecar carries its own tags so Traefik's router is not
+  duplicated. Envoy's metrics are a `<job_name>-envoy` service tagged for Alloy.

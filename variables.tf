@@ -104,3 +104,16 @@ variable "dns_servers" {
   type        = list(string)
   default     = []
 }
+
+variable "mesh" {
+  description = <<-EOT
+    The Consul service mesh. enabled puts Grafana behind an Envoy sidecar (transparent
+    proxy), as a client: it reaches its data sources as <name>.virtual.consul over mTLS, as
+    their intentions allow — set their URLs to those names. Its HTTP port stays open for
+    Traefik, which is outside the mesh.
+  EOT
+  type = object({
+    enabled = optional(bool, false)
+  })
+  default = {}
+}

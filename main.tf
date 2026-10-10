@@ -65,9 +65,22 @@ resource "nomad_job" "grafana" {
     datasources_yaml = local.datasources_yaml
     resources        = var.resources
     dns_servers      = var.dns_servers
+    mesh             = var.mesh
   })
 
   purge_on_destroy = true
 
   depends_on = [vault_kv_secret_v2.admin]
+}
+
+# In the mesh: what Consul's L7 features see. Grafana is only a client there
+# (Traefik reaches it from outside), so no service is allowed to it.
+resource "consul_config_entry" "defaults" {
+  count = var.mesh.enabled ? 1 : 0
+
+  kind = "service-defaults"
+  name = var.job_name
+  config_json = jsonencode({
+    Protocol = "http"
+  })
 }
