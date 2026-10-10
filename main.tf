@@ -81,6 +81,10 @@ resource "consul_config_entry" "defaults" {
   kind = "service-defaults"
   name = var.job_name
   config_json = jsonencode({
-    Protocol = "http"
+    # As Consul stores it (with the empty blocks it fills in), so a plan sees no drift.
+    Protocol         = "http"
+    Expose           = {}
+    MeshGateway      = {}
+    TransparentProxy = {}
   })
 }
