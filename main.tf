@@ -64,6 +64,7 @@ resource "nomad_job" "grafana" {
     anonymous_viewer = var.anonymous_viewer
     datasources_yaml = local.datasources_yaml
     resources        = var.resources
+    dns_servers      = var.dns_servers
   })
 
   purge_on_destroy = true

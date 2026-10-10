@@ -9,3 +9,9 @@
 - Provisions the given data sources (Mimir, Loki) pointing at their Consul
   addresses. Admin password generated and kept in Vault; a consumer reads it to
   push dashboards and alerts. Anonymous viewer on by default, analytics off.
+
+## v0.1.1
+
+- `dns_servers`: the job resolves through them, such as the platform's Consul
+  DNS, so data source URLs can name Consul services (`mimir.service.consul`,
+  `loki.service.consul`) and be found wherever they run.

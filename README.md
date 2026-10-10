@@ -18,6 +18,7 @@ kept in Vault; a consumer app reads it to push its own dashboards and alerts.
 | `hostname` | — | FQDN Grafana is served on |
 | `vault_kv_path` | — | Vault KV v2 mount the platform gives |
 | `datasources` | `[]` | `[{name, type, url, is_default}]`, e.g. Mimir and Loki |
+| `dns_servers` | `[]` | DNS servers the job resolves through (e.g. Consul DNS), for data source URLs naming Consul services; empty — the node's |
 | `admin_password` | generated | Grafana admin password |
 | `job_name` | `grafana` | Nomad job, Consul service, Traefik router |
 | `namespace` | `default` | Nomad namespace |

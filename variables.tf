@@ -93,3 +93,9 @@ variable "resources" {
   })
   default = {}
 }
+
+variable "dns_servers" {
+  description = "DNS servers the Grafana job resolves through, such as the platform's Consul DNS, so a data source's URL can name a Consul service (mimir.service.consul) and be found wherever it runs. They must forward other names too. Empty: the node's resolvers."
+  type        = list(string)
+  default     = []
+}
