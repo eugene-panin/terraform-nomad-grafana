@@ -35,3 +35,9 @@
 - The mesh's config entries are written as Consul stores them (the empty
   blocks it fills into service-defaults; Type and Precedence on each intention
   source), so a plan no longer rewrites them on every apply.
+
+## v0.1.5
+
+- Envoy passes the mesh's traffic to the port inside the group
+  (`local_service_port`), not to the dynamic host port the service is
+  registered with, where nothing listens.

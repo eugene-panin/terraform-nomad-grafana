@@ -102,3 +102,16 @@ run "out_of_the_mesh_by_default" {
     error_message = "Without mesh.enabled there is no sidecar."
   }
 }
+
+run "envoy_passes_to_the_port_inside_the_group" {
+  command = apply
+
+  variables {
+    mesh = { enabled = true }
+  }
+
+  assert {
+    condition     = strcontains(nomad_job.grafana.jobspec, "local_service_port = 3000")
+    error_message = "With a dynamic port, Envoy must be told the port inside the group."
+  }
+}
