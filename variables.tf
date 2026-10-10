@@ -86,12 +86,17 @@ variable "traefik" {
 }
 
 variable "resources" {
-  description = "CPU (MHz) and memory (MB) for the Grafana task."
+  description = "CPU (MHz) and memory (MB) for the Grafana task: memory is what it reserves (sized to its use), memory_max how far it may grow (Nomad memory oversubscription)."
   type = object({
-    cpu    = optional(number, 500)
-    memory = optional(number, 512)
+    cpu        = optional(number, 500)
+    memory     = optional(number, 128)
+    memory_max = optional(number, 512)
   })
   default = {}
+  validation {
+    condition     = var.resources.memory_max >= var.resources.memory
+    error_message = "resources.memory_max must be at least resources.memory."
+  }
 }
 
 variable "dns_servers" {

@@ -15,3 +15,9 @@
 - `dns_servers`: the job resolves through them, such as the platform's Consul
   DNS, so data source URLs can name Consul services (`mimir.service.consul`,
   `loki.service.consul`) and be found wherever they run.
+
+## v0.1.2
+
+- The task reserves 128 MB, sized to its use, and may grow to 512 MB:
+  `resources.memory_max` (Nomad memory oversubscription, which the platform
+  turns on). It reserved more than it used before.

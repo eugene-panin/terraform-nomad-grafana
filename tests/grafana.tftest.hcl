@@ -64,3 +64,12 @@ run "the_datasources_by_their_consul_names" {
     error_message = "Grafana must resolve through the given DNS and reach its data sources by their Consul names."
   }
 }
+
+run "memory_is_reserved_by_use_and_may_grow" {
+  command = apply
+
+  assert {
+    condition     = strcontains(nomad_job.grafana.jobspec, "memory     = 128") && strcontains(nomad_job.grafana.jobspec, "memory_max = 512")
+    error_message = "The task must reserve its usual memory and be allowed to grow to memory_max."
+  }
+}
