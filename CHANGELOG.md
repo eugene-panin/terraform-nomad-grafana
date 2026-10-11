@@ -41,3 +41,10 @@
 - Envoy passes the mesh's traffic to the port inside the group
   (`local_service_port`), not to the dynamic host port the service is
   registered with, where nothing listens.
+
+## v0.1.6
+
+- `oidc`: Grafana can sign people in through an OIDC provider, such as Vault's
+  on the platform: those in its admin group are Admins, anyone else is refused.
+  The client secret is kept in Vault with the admin credential and read by the
+  job; it never reaches the jobspec.

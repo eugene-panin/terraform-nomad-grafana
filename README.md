@@ -48,3 +48,11 @@ With `mesh.enabled`, Grafana gets an Envoy sidecar (transparent proxy) and joins
 the mesh as a client: point the data sources at `mimir.virtual.consul` and
 `loki.virtual.consul`, and allow `grafana` in their intentions. Its HTTP port
 stays open for Traefik, which is outside the mesh.
+
+## Sign-in through an OIDC provider
+
+With `oidc`, Grafana signs people in through a provider (Vault's, on a hashistack
+platform with `sso`): `auth_url`, `token_url`, `api_url` from its `sso` output, a
+client made for Grafana with the redirect URI `https://<hostname>/login/generic_oauth`.
+Those whose `groups` claim holds `admin_group` are Admins; anyone else is refused.
+Turn `anonymous_viewer` off with it.

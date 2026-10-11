@@ -2,7 +2,12 @@ locals {
   secret_name    = "${var.namespace}/${var.job_name}/admin"
   volume_name    = "${var.job_name}-data"
   admin_password = coalesce(var.admin_password, random_password.admin.result)
-  admin_secret   = { username = "admin", password = local.admin_password }
+  # The OIDC client's secret, when Grafana signs people in through a provider,
+  # is kept with the admin credential: the job reads only its own secret.
+  admin_secret = merge(
+    { username = "admin", password = local.admin_password },
+    var.oidc == null ? {} : { oidc_client_secret = var.oidc.client_secret },
+  )
   secret_version = parseint(substr(sha256(jsonencode(local.admin_secret)), 0, 8), 16)
 
   datasources_yaml = yamlencode({
@@ -62,6 +67,8 @@ resource "nomad_job" "grafana" {
     image            = var.image
     http_port        = var.http_port
     anonymous_viewer = var.anonymous_viewer
+    # Without the secret (the job reads it from Vault), so the jobspec is not secret.
+    oidc             = var.oidc == null ? null : nonsensitive({ for k, v in var.oidc : k => v if k != "client_secret" })
     datasources_yaml = local.datasources_yaml
     resources        = var.resources
     dns_servers      = var.dns_servers

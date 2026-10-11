@@ -117,3 +117,25 @@ variable "mesh" {
   })
   default = {}
 }
+
+variable "oidc" {
+  description = <<-EOT
+    Sign-in through an OIDC provider, such as Vault's on the platform (the hashistack sso
+    output gives the URLs, scopes and admin group). Those whose groups claim holds
+    admin_group are Admins; anyone else the provider lets through is refused. The client
+    secret is kept in Vault with the admin credential. Null: only the admin password (and
+    anonymous_viewer).
+  EOT
+  type = object({
+    name          = optional(string, "Vault")
+    client_id     = string
+    client_secret = string
+    auth_url      = string
+    token_url     = string
+    api_url       = string
+    scopes        = optional(list(string), ["openid", "user", "groups"])
+    admin_group   = optional(string, "platform-admins")
+  })
+  sensitive = true
+  default   = null
+}

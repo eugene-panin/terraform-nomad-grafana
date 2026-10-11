@@ -115,3 +115,29 @@ run "envoy_passes_to_the_port_inside_the_group" {
     error_message = "With a dynamic port, Envoy must be told the port inside the group."
   }
 }
+
+run "it_signs_people_in_through_oidc" {
+  command = apply
+
+  variables {
+    anonymous_viewer = false
+    oidc = {
+      client_id     = "grafana-client"
+      client_secret = "s3cret"
+      auth_url      = "https://vault.example.com/ui/vault/identity/oidc/provider/platform/authorize"
+      token_url     = "https://vault.example.com/v1/identity/oidc/provider/platform/token"
+      api_url       = "https://vault.example.com/v1/identity/oidc/provider/platform/userinfo"
+    }
+  }
+
+  assert {
+    condition = (
+      strcontains(nomad_job.grafana.jobspec, "GF_AUTH_GENERIC_OAUTH_CLIENT_ID           = \"grafana-client\"")
+      && strcontains(nomad_job.grafana.jobspec, "contains(groups[*], 'platform-admins') && 'Admin' || ''")
+      && strcontains(nomad_job.grafana.jobspec, "GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET={{ .Data.data.oidc_client_secret }}")
+      && !strcontains(nomad_job.grafana.jobspec, "s3cret")
+      && strcontains(nomad_job.grafana.jobspec, "GF_AUTH_ANONYMOUS_ENABLED            = \"false\"")
+    )
+    error_message = "Grafana must sign people in through the provider, make its admin group Admins, and read the client secret from Vault, never from the jobspec."
+  }
+}
