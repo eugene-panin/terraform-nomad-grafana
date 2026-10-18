@@ -27,7 +27,7 @@ kept in Vault; a consumer app reads it to push its own dashboards and alerts.
 | `http_port` | `3000` | port Traefik passes to |
 | `anonymous_viewer` | `true` | read without a login (already behind WireGuard) |
 | `internal_host_network` | `default` | host network it binds to |
-| `traefik` | internal / dns | `{entrypoint, certresolver}` |
+| `traefik` | internal, no resolver | `{entrypoint, certresolver}`; no resolver takes the entrypoint's certificate |
 | `resources` | `{500, 512}` | `{cpu, memory}` |
 
 ## Outputs

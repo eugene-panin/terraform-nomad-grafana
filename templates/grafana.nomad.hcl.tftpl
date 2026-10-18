@@ -50,7 +50,9 @@ job "${job_name}" {
         "traefik.http.routers.${job_name}.rule=Host(`${hostname}`)",
         "traefik.http.routers.${job_name}.entrypoints=${traefik.entrypoint}",
         "traefik.http.routers.${job_name}.tls=true",
+%{ if traefik.certresolver != null ~}
         "traefik.http.routers.${job_name}.tls.certresolver=${traefik.certresolver}",
+%{ endif ~}
       ]
 %{ if mesh.enabled ~}
 

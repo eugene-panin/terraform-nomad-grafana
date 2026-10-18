@@ -77,10 +77,10 @@ variable "internal_host_network" {
 }
 
 variable "traefik" {
-  description = "Traefik entrypoint Grafana is published on and its certificate resolver. The defaults are the internal (WireGuard-only) entrypoint of the hashi platform."
+  description = "Traefik entrypoint Grafana is published on, and the certificate resolver its router names: none by default, so it takes the certificate of the entrypoint, as the internal (WireGuard-only) entrypoint of the hashi platform gives one."
   type = object({
     entrypoint   = optional(string, "internal")
-    certresolver = optional(string, "dns")
+    certresolver = optional(string)
   })
   default = {}
 }

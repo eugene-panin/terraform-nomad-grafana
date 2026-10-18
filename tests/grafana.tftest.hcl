@@ -29,6 +29,24 @@ run "it_serves_on_the_internal_entrypoint" {
     condition     = output.admin_secret == "default/grafana/admin"
     error_message = "The admin credential is not at the expected Vault name."
   }
+
+  assert {
+    condition     = !strcontains(nomad_job.grafana.jobspec, "certresolver")
+    error_message = "By default the router names no certificate resolver: it takes the entrypoint's certificate."
+  }
+}
+
+run "a_certresolver_is_named_when_given" {
+  command = apply
+
+  variables {
+    traefik = { entrypoint = "public-https", certresolver = "http" }
+  }
+
+  assert {
+    condition     = strcontains(nomad_job.grafana.jobspec, "traefik.http.routers.grafana.tls.certresolver=http")
+    error_message = "A certresolver given must reach the router."
+  }
 }
 
 run "it_provisions_the_datasources" {

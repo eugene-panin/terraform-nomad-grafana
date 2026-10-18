@@ -48,3 +48,10 @@
   on the platform: those in its admin group are Admins, anyone else is refused.
   The client secret is kept in Vault with the admin credential and read by the
   job; it never reaches the jobspec.
+
+## v0.2.0
+
+- `traefik.certresolver` is none by default: the router takes the certificate of
+  its entrypoint, as the internal entrypoint of the hashi platform from v1.0.0
+  gives one, signed by the project's CA. Give `certresolver` to name one, such
+  as `dns` on an earlier platform that had it.
